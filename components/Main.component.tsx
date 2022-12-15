@@ -47,25 +47,29 @@ export const Main = () => {
   };
 
   const userSchema = yup.object().shape({
-    name: yup.string().required(),
+    name: yup.string().required('Nome é obrigatório'),
     number: yup
       .string()
-      .required('É necessário informar o número do usuário')
+      .required('Número é obrigatório')
       .matches(
         /([0-9]){2}([0-9]){9}/g,
-        'O número do usuário deve seguir o formato 11999999999'
+        'O número deve estar no formato 11999999999'
       ),
   });
 
   const createNewGroupSchema = yup.object().shape({
-    name: yup.string().required(),
-    value: yup.number().required(),
-    endDate: yup.date().required(),
+    name: yup.string().required('Nome é obrigatório'),
+    value: yup
+      .string()
+      .required('O valor é obrigatório')
+      .matches(/([0-9])/g, 'O valor deve conter somente números')
+      .transform((value) => Number(value)),
+    endDate: yup.string().required('A data de término é obrigatória'),
     users: yup
       .array()
       .of(userSchema)
-      .required('É necessário adicionar usários no grupo')
-      .min(3, 'É necessário no mínimo 3 usuários')
+      .required('Mínimo de 3 pessoas')
+      .min(3, 'Mínimo de 3 pessoas')
       .test(
         'Números repetidos ou insuficientes',
         'Não é possível adicionar números repetidos nem insuficientes',
@@ -81,6 +85,23 @@ export const Main = () => {
     formState: { errors },
     reset,
   } = useForm<FormValues>({ resolver: yupResolver(createNewGroupSchema) });
+
+  const onSubmit = (data: FormValues) => {
+    fetch('ec2-3-89-107-19.compute-1.amazonaws.com:8080', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        toast.success(`${response}`);
+      })
+      .catch((error) => {
+        toast.error(`${error.message}`);
+      });
+    reset();
+  };
 
   return (
     <Stack
@@ -99,10 +120,11 @@ export const Main = () => {
       />
       <Toolbar />
       <Stack spacing={1} width="90%" maxWidth="450px">
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={1}>
             <h3>Grupo</h3>
             <TextField
+              {...register('name')}
               name="name"
               variant="outlined"
               size="small"
@@ -110,8 +132,11 @@ export const Main = () => {
               label="Nome"
               color="success"
               aria-label="Nome do grupo"
+              error={!!errors.name}
+              helperText={errors.name?.message}
             />
             <TextField
+              {...register('value')}
               name="value"
               variant="outlined"
               size="small"
@@ -119,6 +144,20 @@ export const Main = () => {
               label="Valor"
               color="success"
               aria-label="Valor máximo do presente"
+              error={!!errors.value}
+              helperText={errors.value?.message}
+            />
+            <TextField
+              {...register('endDate')}
+              name="endDate"
+              variant="outlined"
+              size="small"
+              placeholder="Data do amigo secreto"
+              label="Data"
+              color="success"
+              aria-label="Data do amigo secreto"
+              error={!!errors.endDate}
+              helperText={errors.endDate?.message}
             />
           </Stack>
           <Stack spacing={1}>
@@ -153,6 +192,7 @@ export const Main = () => {
                     })}
                   >
                     <TextField
+                      {...register(`users.${index}.name`)}
                       name={`users[${index}].name`}
                       placeholder="Nome do participante"
                       label="Nome"
@@ -160,8 +200,11 @@ export const Main = () => {
                       size="small"
                       color="success"
                       aria-label="Nome do participante a ser adicionado"
+                      error={!!errors.users?.[index]?.name}
+                      helperText={errors.users?.[index]?.name?.message}
                     />
                     <TextField
+                      {...register(`users.${index}.number`)}
                       name={`users[${index}].number`}
                       placeholder="Telefone do participante"
                       label="Telefone"
@@ -169,6 +212,8 @@ export const Main = () => {
                       size="small"
                       color="success"
                       aria-label="Telefone do participante a ser adicionado"
+                      error={!!errors.users?.[index]?.number}
+                      helperText={errors.users?.[index]?.number?.message}
                     />
                     <IconButton
                       size="small"
@@ -188,6 +233,7 @@ export const Main = () => {
             variant="contained"
             color="success"
             sx={{ width: '100%', marginTop: '20px', marginBottom: '50px' }}
+            type="submit"
           >
             Sortear
           </Button>
