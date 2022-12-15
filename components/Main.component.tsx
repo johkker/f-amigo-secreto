@@ -62,8 +62,7 @@ export const Main = () => {
     value: yup
       .string()
       .required('O valor é obrigatório')
-      .matches(/([0-9])/g, 'O valor deve conter somente números')
-      .transform((value) => Number(value)),
+      .matches(/([0-9])/g, 'O valor deve conter somente números'),
     endDate: yup.string().required('A data de término é obrigatória'),
     users: yup
       .array()
@@ -87,12 +86,17 @@ export const Main = () => {
   } = useForm<FormValues>({ resolver: yupResolver(createNewGroupSchema) });
 
   const onSubmit = (data: FormValues) => {
+    const newValue = Number(data.value);
+    const newData = {
+      ...data,
+      value: newValue,
+    };
     fetch('ec2-3-89-107-19.compute-1.amazonaws.com:8080', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(newData),
     })
       .then((response) => {
         toast.success(`${response}`);
