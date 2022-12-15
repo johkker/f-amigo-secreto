@@ -91,7 +91,7 @@ export const Main = () => {
       ...data,
       value: newValue,
     };
-    fetch('http://ec2-3-89-107-19.compute-1.amazonaws.com:8080', {
+    fetch('https://ec2-3-89-107-19.compute-1.amazonaws.com:8080', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
