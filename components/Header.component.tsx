@@ -3,10 +3,10 @@ import Head from 'next/head';
 export const Header = () => {
   return (
     <Head>
-      <title>Create Next App</title>
+      <title>Amigo Secreto</title>
       <meta
         name="Aplicativo para sortear grupos de 'amigo secreto' (amigo oculto)."
-        content="Website criado em NextJs, com JoyUI como biblioteca de estilo"
+        content="Website criado em NextJs, com MaterialUI como biblioteca de componentes"
       />
       <link
         rel="apple-touch-icon"
