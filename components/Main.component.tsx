@@ -91,7 +91,7 @@ export const Main = () => {
       ...data,
       value: newValue,
     };
-    fetch('https://ec2-3-89-107-19.compute-1.amazonaws.com:443', {
+    fetch('https://vps43788.publiccloud.com.br:3000', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
