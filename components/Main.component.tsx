@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 interface Participante {
   name: string;
@@ -26,6 +27,7 @@ export const Main = () => {
     { name: '', number: '' },
     { name: '', number: '' },
   ]);
+  const [loading, setLoading] = useState(false);
 
   const handleAddParticipante = () => {
     setNumeroParticipantes(numeroParticipantes + 1);
@@ -85,26 +87,36 @@ export const Main = () => {
     reset,
   } = useForm<FormValues>({ resolver: yupResolver(createNewGroupSchema) });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     const newValue = Number(data.value);
     const newData = {
       ...data,
       value: newValue,
     };
-    fetch('https://vps43788.publiccloud.com.br:3000', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newData),
-    })
+
+    const response = await axios
+      .post('https://vps43788.publiccloud.com.br:3000', newData)
       .then((response) => {
-        toast.success(`${response}`);
+        reset();
+        return response.data.message;
       })
       .catch((error) => {
-        toast.error(`${error.message}`);
+        return error.response.data.error.message;
       });
-    reset();
+
+    toast.promise(
+      response,
+      {
+        loading: 'Fazendo verificações...',
+        success: (data) => `${data}`,
+        error: (err) => `${err}`,
+      },
+      {
+        style: {
+          minWidth: '300px',
+        },
+      }
+    );
   };
 
   return (
