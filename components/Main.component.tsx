@@ -1,4 +1,5 @@
-import { Button, Card, IconButton, TextField, Toolbar } from '@mui/material';
+import { Card, IconButton, TextField, Toolbar } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
 import AddIcon from '@mui/icons-material/AddBox';
 import DeleteIcon from '@mui/icons-material/PersonRemove';
@@ -94,29 +95,23 @@ export const Main = () => {
       value: newValue,
     };
 
-    const response = axios
-      .post('https://vps43788.publiccloud.com.br:3000', newData)
-      .then((response) => {
-        reset();
-        return response.data.message;
+    setLoading(true);
+
+    await axios
+      .post('https://vps43788.publiccloud.com.br:3000', newData, {
+        validateStatus(status) {
+          return status >= 200 && status < 300 && status !== 204;
+        },
       })
-      .catch((error) => {
-        return error.response.data.error.message;
+      .then((response) => {
+        toast.success(response.data.message);
+        reset();
+      })
+      .catch((err) => {
+        toast.error(err.response.data.error.message);
       });
 
-    await toast.promise(
-      response,
-      {
-        loading: 'Fazendo verificações...',
-        success: (data) => `${data}`,
-        error: (err) => `${err}`,
-      },
-      {
-        style: {
-          minWidth: '300px',
-        },
-      }
-    );
+    setLoading(false);
   };
 
   return (
@@ -245,14 +240,15 @@ export const Main = () => {
               );
             })}
           </Stack>
-          <Button
+          <LoadingButton
             variant="contained"
             color="success"
             sx={{ width: '100%', marginTop: '20px', marginBottom: '50px' }}
             type="submit"
+            loading={loading}
           >
             Sortear
-          </Button>
+          </LoadingButton>
         </form>
       </Stack>
     </Stack>
