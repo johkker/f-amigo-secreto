@@ -94,7 +94,7 @@ export const Main = () => {
       value: newValue,
     };
 
-    const response = await axios
+    const response = axios
       .post('https://vps43788.publiccloud.com.br:3000', newData)
       .then((response) => {
         reset();
@@ -104,7 +104,7 @@ export const Main = () => {
         return error.response.data.error.message;
       });
 
-    toast.promise(
+    await toast.promise(
       response,
       {
         loading: 'Fazendo verificações...',
