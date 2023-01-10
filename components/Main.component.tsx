@@ -1,4 +1,10 @@
-import { Card, IconButton, TextField, Toolbar } from '@mui/material';
+import {
+  Card,
+  IconButton,
+  TextField,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
 import AddIcon from '@mui/icons-material/AddBox';
@@ -54,10 +60,7 @@ export const Main = () => {
     number: yup
       .string()
       .required('Número é obrigatório')
-      .matches(
-        /([0-9]){2}([0-9]){9}/g,
-        'O número deve estar no formato 11999999999'
-      ),
+      .matches(/([0-9]){2}([0-9]){9}/g, 'Formato: 00999999999'),
   });
 
   const createNewGroupSchema = yup.object().shape({
@@ -72,14 +75,12 @@ export const Main = () => {
       .of(userSchema)
       .required('Mínimo de 3 pessoas')
       .min(3, 'Mínimo de 3 pessoas')
-      .test(
-        'Números repetidos ou insuficientes',
-        'Não é possível adicionar números repetidos nem insuficientes',
-        (users) => {
-          if (!users) return false;
-          return new Set(users).size === users.length;
-        }
-      ),
+      .test('unique', 'Não é possível adicionar números repetidos', (users) => {
+        if (!users) return false;
+        const numbers = users.map((user) => user.number);
+        const uniqueNumbers = new Set(numbers);
+        return numbers.length === uniqueNumbers.size;
+      }),
   });
   const {
     register,
@@ -185,6 +186,9 @@ export const Main = () => {
                 <AddIcon htmlColor="green" />
               </IconButton>
             </Stack>
+
+            <Typography color="error">{errors.users?.message}</Typography>
+
             {participantes.map((participante, index) => {
               return (
                 <Card
@@ -197,11 +201,13 @@ export const Main = () => {
                       flexDirection: theme.breakpoints.up('md')
                         ? 'row'
                         : 'column',
-                      alignItems: 'center',
+                      alignItems: 'flex-start',
                       justifyContent: 'center',
                       gap: '3px',
+                      paddingTop: '10px',
                     })}
                   >
+                    {' '}
                     <TextField
                       {...register(`users.${index}.name`)}
                       name={`users[${index}].name`}
