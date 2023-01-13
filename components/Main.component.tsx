@@ -1,10 +1,9 @@
-import {
-  Card,
-  IconButton,
-  TextField,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import Card from '@mui/material/Card';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
 import AddIcon from '@mui/icons-material/AddBox';
@@ -12,20 +11,10 @@ import DeleteIcon from '@mui/icons-material/PersonRemove';
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-
-interface Participante {
-  name: string;
-  number: string;
-}
-interface FormValues {
-  name: string;
-  value: string;
-  endDate: string;
-  users: Participante[];
-}
+import { FormValues, Participante } from '../interfaces';
+import { createNewGroupSchema } from '../schemas';
 
 export const Main = () => {
   const [numeroParticipantes, setNumeroParticipantes] = useState(3);
@@ -55,33 +44,6 @@ export const Main = () => {
     );
   };
 
-  const userSchema = yup.object().shape({
-    name: yup.string().required('Nome é obrigatório'),
-    number: yup
-      .string()
-      .required('Número é obrigatório')
-      .matches(/([0-9]){2}([0-9]){9}/g, 'Formato: 00999999999'),
-  });
-
-  const createNewGroupSchema = yup.object().shape({
-    name: yup.string().required('Nome é obrigatório'),
-    value: yup
-      .string()
-      .required('O valor é obrigatório')
-      .matches(/([0-9])/g, 'O valor deve conter somente números'),
-    endDate: yup.string().required('A data de término é obrigatória'),
-    users: yup
-      .array()
-      .of(userSchema)
-      .required('Mínimo de 3 pessoas')
-      .min(3, 'Mínimo de 3 pessoas')
-      .test('unique', 'Não é possível adicionar números repetidos', (users) => {
-        if (!users) return false;
-        const numbers = users.map((user) => user.number);
-        const uniqueNumbers = new Set(numbers);
-        return numbers.length === uniqueNumbers.size;
-      }),
-  });
   const {
     register,
     handleSubmit,
@@ -177,14 +139,16 @@ export const Main = () => {
               sx={{ flexDirection: 'row', justifyContent: 'space-between' }}
             >
               <h3>Participantes</h3>
-              <IconButton
-                size="large"
-                aria-label="Adicionar participante ao sorteio"
-                sx={{ position: 'relative', top: '7px' }}
-                onClick={handleAddParticipante}
-              >
-                <AddIcon htmlColor="green" />
-              </IconButton>
+              <Tooltip title="Adicionar participante">
+                <IconButton
+                  size="large"
+                  aria-label="Adicionar participante ao sorteio"
+                  sx={{ position: 'relative', top: '7px' }}
+                  onClick={handleAddParticipante}
+                >
+                  <AddIcon htmlColor="green" />
+                </IconButton>
+              </Tooltip>
             </Stack>
 
             <Typography color="error">{errors.users?.message}</Typography>
@@ -232,29 +196,33 @@ export const Main = () => {
                       error={!!errors.users?.[index]?.number}
                       helperText={errors.users?.[index]?.number?.message}
                     />
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveParticipante(participante)}
-                    >
-                      <DeleteIcon
-                        htmlColor="#f57683"
-                        sx={{ width: '16px', height: '16px' }}
-                      />
-                    </IconButton>
+                    <Tooltip title={`Remover ${participante.name}`}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemoveParticipante(participante)}
+                      >
+                        <DeleteIcon
+                          htmlColor="#f24f5f"
+                          sx={{ width: '16px', height: '16px' }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   </Stack>
                 </Card>
               );
             })}
           </Stack>
-          <LoadingButton
-            variant="contained"
-            color="success"
-            sx={{ width: '100%', marginTop: '20px', marginBottom: '50px' }}
-            type="submit"
-            loading={loading}
-          >
-            Sortear
-          </LoadingButton>
+          <Tooltip title="Realizar sorteio do grupo">
+            <LoadingButton
+              variant="contained"
+              color="success"
+              sx={{ width: '100%', marginTop: '20px', marginBottom: '50px' }}
+              type="submit"
+              loading={loading}
+            >
+              Sortear
+            </LoadingButton>
+          </Tooltip>
         </form>
       </Stack>
     </Stack>

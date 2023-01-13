@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100;300;500;600;700&display=swap');
+
 html,
 body {
   padding: 0;
@@ -12,21 +14,21 @@ h4,
 h5,
 h6 {
   margin-bottom: 5px;
-  font-family: 'Cherry Swash', cursive;
+  font-family: 'Libre Franklin', cursive;
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
   background: rgb(255, 255, 255);
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgb(255, 32, 32);
-  border-radius: 5px 5px 5px 5px;
-}
+  border-radius: 2px 2px 2px 2px;
+} */
 
 * {
   overflow-x: visible;
