@@ -11,11 +11,14 @@ export const Footer = () => {
         justifyContent: 'center',
         height: '40px',
         width: '100%',
-        backgroundColor: '#f5f5f5',
         position: 'fixed',
-        bottom: 0,
-        right: 0,
-        borderTop: '1px solid #bbbbbb',
+        bottom: '0',
+        left: '0',
+        background: 'rgba(255, 255, 255, 0.165)',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
+        backdropFilter: ' blur(2.6px)',
+        webkitBackdropFilter: 'blur(2.6px)',
+        border: '1px solid rgba(255, 255, 255, 0.25)',
       }}
       divider={<Divider orientation="vertical" flexItem />}
     >

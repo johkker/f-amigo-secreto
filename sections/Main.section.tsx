@@ -85,6 +85,7 @@ export const Main = () => {
         height: '100%',
         alignItems: 'center',
         justifyContent: 'flex-start',
+        backgroundImage: '/background.png',
       }}
     >
       <Toolbar
@@ -134,30 +135,34 @@ export const Main = () => {
               helperText={errors.endDate?.message}
             />
           </Stack>
+          <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <h3>Participantes</h3>
+            <Tooltip title="Adicionar participante">
+              <IconButton
+                size="large"
+                aria-label="Adicionar participante ao sorteio"
+                sx={{ position: 'relative', top: '7px' }}
+                onClick={handleAddParticipante}
+              >
+                <AddIcon htmlColor="green" />
+              </IconButton>
+            </Tooltip>
+          </Stack>
           <Stack spacing={1}>
-            <Stack
-              sx={{ flexDirection: 'row', justifyContent: 'space-between' }}
-            >
-              <h3>Participantes</h3>
-              <Tooltip title="Adicionar participante">
-                <IconButton
-                  size="large"
-                  aria-label="Adicionar participante ao sorteio"
-                  sx={{ position: 'relative', top: '7px' }}
-                  onClick={handleAddParticipante}
-                >
-                  <AddIcon htmlColor="green" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-
             <Typography color="error">{errors.users?.message}</Typography>
 
             {participantes.map((participante, index) => {
               return (
                 <Card
                   elevation={5}
-                  sx={{ padding: '10px' }}
+                  sx={{
+                    animation:
+                      'slide-in-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
+                    padding: '10px',
+                    border: '2px solid transparent',
+                    background:
+                      'linear-gradient(#FFFFFF, #FFFFFF) padding-box,linear-gradient(10deg, #FFFFFF 0%, #184A2C 50%,#FFFFFF 100%) border-box',
+                  }}
                   key={`participante.name+${index}`}
                 >
                   <Stack

@@ -1,4 +1,4 @@
-import { Footer, Header, Main, Topbar } from '../components';
+import { Footer, Header, Main, Topbar } from '../sections';
 import { Toaster } from 'react-hot-toast';
 
 export default function Home() {
